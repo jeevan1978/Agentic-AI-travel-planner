@@ -32,7 +32,8 @@ The planner uses an **LLM-driven tool-calling loop** rather than a fixed sequenc
 # 🏗️ Architecture
 
 The planner follows a single-pass LangGraph workflow.
-![Uploading Agentic AI Travel Planner Architecture.png…]()
+<img width="1536" height="1024" alt="Agentic AI Travel Planner Architecture" src="https://github.com/user-attachments/assets/6a9e0809-da46-4b11-84b7-e52e980cc4d6" />
+
 
 
 # 🧠 Agentic Tool-Calling
