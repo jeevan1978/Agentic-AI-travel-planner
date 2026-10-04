@@ -32,55 +32,8 @@ The planner uses an **LLM-driven tool-calling loop** rather than a fixed sequenc
 # 🏗️ Architecture
 
 The planner follows a single-pass LangGraph workflow.
+![Uploading Agentic AI Travel Planner Architecture.png…]()
 
-```text
-                         ┌─────────────────────┐
-                         │     User Request    │
-                         └──────────┬──────────┘
-                                    ↓
-                         ┌─────────────────────┐
-                         │ Validate Request    │
-                         └──────────┬──────────┘
-                                    ↓
-                         ┌─────────────────────┐
-                         │ Create Trip         │
-                         │ Blueprint           │
-                         └──────────┬──────────┘
-                                    ↓
-                         ┌─────────────────────┐
-                         │ Initialize Day      │
-                         └──────────┬──────────┘
-                                    ↓
-                         ┌─────────────────────┐
-                         │   LLM Tool Loop     │
-                         └──────────┬──────────┘
-                                    ↓
-                    ┌───────────────┴────────────────┐
-                    ↓               ↓                ↓
-                Weather         Wikipedia        Transport
-                    ↓               ↓                ↓
-                    └───────────────┬────────────────┘
-                                    ↓
-                         ┌─────────────────────┐
-                         │ Tool Results /      │
-                         │ ToolMessages        │
-                         └──────────┬──────────┘
-                                    ↓
-                         ┌─────────────────────┐
-                         │ LLM Synthesizes     │
-                         │ Day Plan             │
-                         └──────────┬──────────┘
-                                    ↓
-                              More Days?
-                              /        \
-                            Yes         No
-                             ↓           ↓
-                       Next Day      Finalize
-                             ↓           ↓
-                       LLM Tool Loop  TripPlan
-```
-
----
 
 # 🧠 Agentic Tool-Calling
 
