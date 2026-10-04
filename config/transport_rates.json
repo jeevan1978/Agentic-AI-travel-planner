@@ -1,0 +1,10 @@
+{
+  "train": {
+    "SL": {"name": "Sleeper", "rate_per_km": "0.60", "tax_rate": "0.00"},
+    "3A": {"name": "AC 3-Tier", "rate_per_km": "1.20", "tax_rate": "0.05"},
+    "2A": {"name": "AC 2-Tier", "rate_per_km": "1.80", "tax_rate": "0.05"},
+    "1A": {"name": "AC First Class", "rate_per_km": "2.40", "tax_rate": "0.05"}
+  },
+  "tax_reference": "https://www.pib.gov.in/newsite/PrintRelease.aspx?lang=2&reg=3&relid=167051",
+  "note": "Configured approximate fares, not official tariff quotes. Excludes reservation, superfast, catering and other charges."
+}
