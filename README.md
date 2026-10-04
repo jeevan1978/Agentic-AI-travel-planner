@@ -39,6 +39,49 @@ UI: **http://localhost:8501**. Backend: **http://localhost:8080**. Interactive s
 - Selection seed samples existing candidate IDs only; it never randomizes facts, weather, prices or hotels.
 - Failures produce unavailable results and warnings. No dynamic replanning is implemented.
 
+## Agentic architecture diagram
+
+```mermaid
+%%{init: {"theme": "dark", "flowchart": {"curve": "basis", "nodeSpacing": 35, "rankSpacing": 45}}}%%
+flowchart TD
+    User["👤 User"] --> UI["🗺️ Streamlit / React interface"]
+    UI --> Request["Request validation<br/>Route · dates · travelers · interests · budget<br/>Train requires one-way railway distance"]
+    Request --> Agent["🧠 LangGraph Travel Agent"]
+    Agent --> Blueprint["Trip blueprint<br/>Exact dates and daily locations<br/>Outbound / return legs · stay periods"]
+    Blueprint --> Day["📅 Initialize current day<br/>Fresh messages and candidate registry"]
+    Day --> LLM["LangChain + Groq LLM<br/>Reason and choose native tool calls"]
+    LLM --> Executor["Request-scoped tool executor<br/>Validate arguments · reuse cached results"]
+    Executor --> Flight["✈️ Flight tool<br/>Inter-city leg ID only"]
+    Executor --> Stay["🏨 Accommodation tool<br/>Stay-period ID only"]
+    Executor --> Weather["🌦️ Weather tool<br/>Exact day date and location"]
+    Executor --> Wiki["📚 Wikipedia tool<br/>Places · culture · temples · dishes"]
+    Executor --> Train["🚆 Train estimator<br/>User-provided one-way railway distance"]
+    Executor --> Random["🎲 Seeded selection<br/>Existing day candidate IDs only"]
+    Flight --> Ignav["Ignav API<br/>Provider flight quotes"]
+    Stay --> StayAPI["StayingAPI<br/>Live accommodation results"]
+    Weather --> WeatherAPI["OpenWeather API<br/>Available exact-date forecasts"]
+    Wiki --> MediaWiki["Wikipedia / MediaWiki<br/>Sourced knowledge and URLs"]
+    Train --> Fares["Deterministic Python fare calculation<br/>SL · 3A · 2A · 1A<br/>Configured rates and taxes"]
+    Ignav --> Results["Tool results and provenance<br/>Failures remain unavailable with warnings"]
+    StayAPI --> Results
+    WeatherAPI --> Results
+    MediaWiki --> Results
+    Fares --> Results
+    Random --> Results
+    Results --> Message["🔄 Matching ToolMessage<br/>Return observations to the LLM"]
+    Message --> LLM
+    LLM -->|Final schedule JSON| Plan["Build daily plan<br/>Resolve verified candidate IDs only"]
+    Plan --> More{"More trip days?"}
+    More -->|Yes: advance day| Day
+    More -->|No| Budget["💰 Python Decimal budget<br/>Known costs · missing prices · provenance"]
+    Budget --> Final["Final TripPlan<br/>COMPLETE / PARTIAL / FAILED<br/>Warnings · tool trace · selection audit"]
+    Final --> Display["📋 Display itinerary and budget status"]
+    classDef box fill:#222222,stroke:#999999,color:#ffffff,stroke-width:1px;
+    class User,UI,Request,Agent,Blueprint,Day,LLM,Executor,Flight,Stay,Weather,Wiki,Train,Random,Ignav,StayAPI,WeatherAPI,MediaWiki,Fares,Results,Message,Plan,More,Budget,Final,Display box;
+```
+
+The LLM chooses tools and reads their ToolMessages before producing each day schedule. Tool branches are available choices, not a fixed execution sequence. Only the tool-observation loop and forward day progression repeat; there is no dynamic replanning.
+
 ## Documentation
 
 | Guide | Contents |
